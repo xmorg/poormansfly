@@ -14,10 +14,10 @@ TODO: Gas giants, larger meshes with skewed UV textures. / rings?
 TODO: Suns, larger meshes, a bright color wiht an even LARGER circle/halo
 
 Interactive Objects
-TODO: Trees and rocks on planets
-TODO: lifeforms on planets.
-TODO: asteroids on space at altitude X
-TODO: Other space ships
+- TODO: Trees and rocks on planets
+- TODO: lifeforms on planets.
+- TODO: asteroids on space at altitude X
+- TODO: Other space ships
 
 Music score:
-TODO: Hum something, mongolian throat music? an oooh or aaah? hmmm.
+- TODO: Hum something, mongolian throat music? an oooh or aaah? hmmm.
