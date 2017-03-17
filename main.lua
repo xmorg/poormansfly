@@ -3,6 +3,8 @@ locx = 50
 locy = 50
 drawx = -32*locx
 drawy = -32*locy
+--drawx = 0
+--drawy = 0
 
 
 starXtable = {}
@@ -26,6 +28,7 @@ pilot = {
 }
 
 speed = 3
+scalespeed = 0.1
 scale = 1
 minscale = 0.001
 maxscale = 1
@@ -105,7 +108,7 @@ function draw_spaceship(s)
 		dx = drawx
 		dy = drawy
 	end
-	love.graphics.push()
+	--love.graphics.push()
 	local width = love.graphics.getWidth()
 	local height = love.graphics.getHeight()
 	-- rotate around the center of the screen by angle radians	
@@ -113,6 +116,8 @@ function draw_spaceship(s)
 	love.graphics.rotate(spaceship.rot)
 	love.graphics.translate(-width/2-50, -height/2)
 	love.graphics.setColor(50,50,50)
+	
+	--dx=0 dy=0
 	love.graphics.polygon("fill", 				
 		s.x + dx,     s.y + dy,
 		s.x +dx+200, s.y +dy-80,
@@ -126,7 +131,7 @@ function draw_spaceship(s)
 	love.graphics.print("loc: " ..spaceship.x.."x"..spaceship.y,
 	spaceship.x+drawx,spaceship.y+drawy-15 )
 
-	love.graphics.pop()
+	--love.graphics.pop()
 end
 
 
@@ -209,6 +214,7 @@ function love.load()
 	generate_planetoid(planets[1], 100, 70, 100)	
 	add_more_planets()
 	--love.graphics.setCanvas()
+	frame = 0
 end
 
 function love.keypressed(key)
@@ -253,8 +259,8 @@ function decrease_ship_speed()
 	end
 end
 
-function love.update()
-	
+function love.update(dt)
+	-----
 	if love.mouse.isDown(1) then
 		raygun=1
 	else
@@ -272,30 +278,27 @@ function love.update()
 		elseif pilot.enteredship == 0 then 
 			sound_booster:play()
 		end
-		
 		if scale > minscale then
 			if pilot.enteredship == 1 and spaceship.playedtakeoff == 0 then
 				voice_liftoff:play()
 				spaceship.playedtakeoff = 1
-			end
-			scale = scale-0.005
-			translate = translate+1
+			end	
+			--scale = scale-0.005
+			scale = scale -(scalespeed *dt) --0.005
 		else
 			scale = minscale
 		end
 	elseif scale < maxscale then
 		if pilot.enteredship == 0 then
 			scale = scale+0.005
-			translate = translate-1
 		elseif love.keyboard.isDown(",") then --decend
 			if scale < maxscale then
-				scale = scale+0.002
+				scale = scale -(scalespeed *dt)
 			else
 				scale = maxscale --landed
 			end
 		end --else fly! :)
 	end
-
 
 	if love.keyboard.isDown("up") then
 		increase_ship_speed("up")
@@ -351,12 +354,12 @@ function love.update()
 		end
 	else
 		decrease_ship_speed()
-	end
-	
-	
+	end	
 end
 
 function love.draw()
+	local width = love.graphics.getWidth()
+	local height = love.graphics.getHeight()
 	for y=1, 100, 1 do
 		for x=1, 
 		100, 1 do
@@ -371,12 +374,12 @@ function love.draw()
 	end
 
 	love.graphics.push() --push for things that need to be scaled
-	love.graphics.translate(translate, translate)
+	--love.graphics.translate(translate, translate)
+	love.graphics.translate(width/2, height/2)
 	love.graphics.scale(scale, scale)
 	
 	draw_planets()
-	love.graphics.pop()
-	
+	love.graphics.pop()	
 	love.graphics.push()
 	love.graphics.translate(translate, translate)
 	love.graphics.scale(scale, scale)	
@@ -426,5 +429,5 @@ function love.draw()
 		love.graphics.print("Use directional keys for thrusters, comma to fly up, and period to fly down. Use A and D to rotate ship",
 		10, love.graphics.getHeight()-30 ) 
 	end
-	 love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10)
+	 --love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10)
 end
