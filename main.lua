@@ -86,20 +86,23 @@ function CreateTexturedCircle(image, segments, ptype)
       local mesh = love.graphics.newMesh( vertices, image, "fan" )
       return mesh
    end      
-   --mesh:setAttributeEnabled("VertexColor", enable)   
-   
+   --mesh:setAttributeEnabled("VertexColor", enable)
+   return mesh
 end
 
 function draw_planets()
    for i, v in ipairs(planets) do
-      love.graphics.setColor(255,255,255)      
-      love.graphics.draw(planets[i].pmesh,
-			 planets[i].x +drawx,
-			 planets[i].y +drawy,
-			 0,
-			 planets[i].w,
-			 planets[i].w
-      )
+      print("drawing planet: "..i.." at "..planets[i].x.."x"..planets[i].y)
+      love.graphics.setColor(255,255,255)
+      if planets[i].pmesh == nil then --print("its nil")
+      else
+	 love.graphics.draw( planets[i].pmesh,
+			     planets[i].x +drawx ,
+			     planets[i].y +drawy ,
+			     0,
+			     planets[i].w,
+			     planets[i].w)
+      end
    end
 end
 
@@ -192,7 +195,7 @@ function add_more_planets()
    local h = love.graphics.getHeight()
    local placex = 0
    local placey = 0
-   for i=2, 20 do
+   for i=1, 5 do
       placex = math.random(-1000, 1000)
       placey = math.random(-1000, 1000)
       gettype = math.random(1,5)
@@ -201,10 +204,18 @@ function add_more_planets()
       else
 	 s = "normal"
       end
-      table.insert(planets, i,  {
+      table.insert(planets,  {
 		      name = "?",
-		      x = placex, --+drawx,
-		      y = placey, --+drawy,
+		      --x = placex, --+drawx,
+		      --y = placey, --+drawy,
+		      --x = love.graphics.getWidth(), --drawx+50*32,
+		      --y = love.graphics.getHeight(), --drawx+50*32,
+		      
+		      x = love.graphics.getWidth()+placex, --*32,
+                      y = love.graphics.getHeight()+placey, --*32,
+
+		      --x = love.graphics.getWidth() +placex, 
+		      --y = love.graphics.getHeight() +placey, 
 		      blocktable = {},
 		      landmap= nil,
 		      circlemap = nil,
@@ -213,7 +224,7 @@ function add_more_planets()
       })
       local rbcolors = math.random(80,120)
       local gcolors = math.random(20, 100)
-      generate_planetoid(planets[i],rbcolors ,gcolors,rbcolors)
+      generate_planetoid(planets[i], rbcolors,gcolors,rbcolors)
    end
 end
 
