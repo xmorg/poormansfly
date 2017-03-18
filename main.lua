@@ -78,8 +78,8 @@ function draw_planets()
    for i, v in ipairs(planets) do
       love.graphics.setColor(255,255,255)      
       love.graphics.draw(planets[i].pmesh,
-			 planets[i].x+drawx,
-			 planets[i].y+drawy,
+			 planets[i].x +drawx,
+			 planets[i].y +drawy,
 			 0,
 			 planets[i].w,
 			 planets[i].w
@@ -150,7 +150,7 @@ function generate_starfield()
    end
 end
 
-function generate_planetoid(p, r,g,b)
+function generate_planetoid(p,r,g,b)
    for y=1, 100, 1 do
       for x=1, 100, 1 do
 	 --table.insert(p.blocktable, math.random(70,150)  )
@@ -173,6 +173,8 @@ end
 function add_more_planets()
    local w = love.graphics.getWidth()
    local h = love.graphics.getHeight()
+   local placex = 0
+   local placey = 0
    for i=2, 20 do
       placex = math.random(-1000, 1000)
       placey = math.random(-1000, 1000)
@@ -184,8 +186,8 @@ function add_more_planets()
       end
       table.insert(planets, i,  {
 		      name = "?",
-		      x = placex,
-		      y = placey,
+		      x = placex, --+drawx,
+		      y = placey, --+drawy,
 		      blocktable = {},
 		      landmap= nil,
 		      circlemap = nil,
@@ -358,6 +360,8 @@ function love.update()
 end
 
 function love.draw()
+   local width  = love.graphics.getWidth()/2
+   local height = love.graphics.getHeight()/2
    for y=1, 100, 1 do
       for x=1, 
       100, 1 do
@@ -380,7 +384,9 @@ function love.draw()
    
    love.graphics.push()
    love.graphics.translate(translate, translate)
-   love.graphics.scale(scale, scale)	
+   --love.graphics.scale(scale, scale)
+   love.graphics.scale(scale, scale)
+   --love.graphics.translate(width/2+drawx, height/2+drawy)
    --pilot shadow?
    if pilot.enteredship == 0 then
       love.graphics.setColor(0,0,0, 100)
