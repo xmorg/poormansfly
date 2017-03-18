@@ -12,7 +12,7 @@ spaceship = {
    x = -drawx +200, 
    y = -drawy +200,
    speed = 3,
-   maxspeed=50,
+   maxspeed=150,
    rot = 0,
    playedtakeoff = 0
 }
@@ -21,7 +21,13 @@ pilot = {
    y = drawy+32*locy+love.graphics.getHeight()/2,
    besideship = 0,
    enteredship = 0,
-   speed=3
+   speed=3,
+   csprite =1,
+   sprite = {love.graphics.newImage("data/pilot1.png"),
+	     love.graphics.newImage("data/pilot2.png"),
+	     love.graphics.newImage("data/pilot3.png"),
+	     love.graphics.newImage("data/pilot4.png")
+   }
 }
 
 speed = 3
@@ -46,6 +52,8 @@ planets = {
 
 
 function CreateTexturedCircle(image, segments, ptype)
+   major, minor, revision, codename = love.getVersion( )
+   --print("Version: Major"..major.."minor"..minor)
    segments = segments or 40
    local vertices = {}
    -- The first vertex is at the center, and has a red tint. We're centering the circle around the origin (0, 0).
@@ -68,10 +76,18 @@ function CreateTexturedCircle(image, segments, ptype)
       table.insert(vertices, {x, y, u, v, 255, 255, 255})
    end
    -- The "fan" draw mode is perfect for our circle.
-   local mesh = love.graphics.newMesh(vertices, "fan")
-   --mesh:setAttributeEnabled("VertexColor", enable)
-   mesh:setTexture(image)
-   return mesh
+   if minor == 10 then
+      print("version 10 detected")
+      local mesh = love.graphics.newMesh(vertices, "fan")
+      mesh:setTexture(image)
+      return mesh
+   else
+      print("version 9 detected")
+      local mesh = love.graphics.newMesh( vertices, image, "fan" )
+      return mesh
+   end      
+   --mesh:setAttributeEnabled("VertexColor", enable)   
+   
 end
 
 function draw_planets()
@@ -96,9 +112,10 @@ function draw_pilot(p)
    local dy = 0	
    if pilot.enteredship == 0 then
       love.graphics.setColor(255,255,255) --pilot
-      love.graphics.print("loc: "..pilot.x-drawx..":"..pilot.y-drawy, 
-			  pilot.x+15, pilot.y+15)
-      love.graphics.circle("fill", pilot.x, pilot.y , 16, 8)
+      --love.graphics.print("loc: "..pilot.x-drawx..":"..pilot.y-drawy, 
+      --pilot.x+15, pilot.y+15)
+      --love.graphics.circle("fill", pilot.x, pilot.y , 16, 8)
+      love.graphics.draw(pilot.sprite[pilot.csprite], pilot.x-28, pilot.y-28)
    else -- ship is ready to fly!
       draw_spaceship(spaceship)
    end
@@ -303,6 +320,7 @@ function love.update()
       end --else fly! :)
    end
    if love.keyboard.isDown("up") then
+      pilot.csprite = 1
       increase_ship_speed("up")
       drawy = drawy+speed
       if drawy % 32 == 0 then locy=locy-2 end
@@ -314,6 +332,7 @@ function love.update()
 	 if drawx % 32 == 0 then locx=locx+2 end
       end
    elseif love.keyboard.isDown("down") then
+      pilot.csprite = 3
       increase_ship_speed("down")
       drawy = drawy-speed
       if drawy % 32 == 0 then locy=locy+2 end
@@ -325,6 +344,7 @@ function love.update()
 	 if drawx % 32 == 0 then locx=locx-2 end
       end
    elseif love.keyboard.isDown("left") then
+      pilot.csprite = 4
       increase_ship_speed("left")
       drawx = drawx+speed
       if drawx % 32 == 0 then locx=locx-2 end
@@ -336,6 +356,7 @@ function love.update()
 	 if drawy % 32 == 0 then locy=locy+2 end
       end
    elseif love.keyboard.isDown("right") then
+      pilot.csprite = 2
       increase_ship_speed("right")
       drawx = drawx-speed
       if drawx % 32 == 0 then locx=locx+2 end
