@@ -1,3 +1,4 @@
+highcanvas = 100
 locx = 50
 locy = 50
 drawx = -32*locx
@@ -62,7 +63,7 @@ planets = {
 
 function load_other_ships()
    for i=1,100 do
-      local shipnum = math.random(1,3)
+      local shipnum = math.random(1,4)
       table.insert(otherships,
 		   {
 		      x = math.random(-250000, 250000),
@@ -95,6 +96,9 @@ function draw_other_ships()
 	 )	 
       end
    end
+end
+function onship_being_shot(x,y) --mouse x,y?
+	--if laser is on, and your x,y,w,h / scale
 end
 function move_other_ships()
    for i,v in ipairs(otherships) do 
@@ -253,7 +257,7 @@ function generate_landmap(r,g,b)
 	 table.insert(bt, math.random(g,g+80)  )
       end
    end
-   bts = love.graphics.newCanvas(100*32,  100*32)
+   bts = love.graphics.newCanvas(highcanvas*32,  highcanvas*32)
    love.graphics.setCanvas(bts)
    for y=1, 100, 1 do --draw the landscape
       for x=1, 100, 1 do					
@@ -273,7 +277,7 @@ function generate_planetoid(p,r,g,b)
 	 table.insert(p.blocktable, math.random(g,g+80)  )	
       end
    end
-   p.landmap = love.graphics.newCanvas(100*32,  100*32)
+   p.landmap = love.graphics.newCanvas(highcanvas*32,  highcanvas*32)
    love.graphics.setCanvas(p.landmap)
    for y=1, 100, 1 do --draw the landscape
       for x=1, 100, 1 do					
@@ -343,7 +347,7 @@ end
 function love.keypressed(key)
    if key == "escape" then
       love.event.quit()
-   elseif key == "e" then
+   elseif key == "e" or key == "return" then
       if pilot.besideship == 1 and pilot.enteredship == 0 then
 	 pilot.enteredship = 1
 	 spaceship.x = pilot.x+drawx
@@ -396,7 +400,7 @@ function love.update()
       speed = spaceship.speed
    end
    
-   if love.keyboard.isDown("space") or love.keyboard.isDown(".") then
+   if love.keyboard.isDown("rshift") or love.keyboard.isDown("lshift") then
       if pilot.enteredship == 1 then 
 	 sound_thruster:play()
       elseif pilot.enteredship == 0 then 
@@ -417,7 +421,7 @@ function love.update()
       if pilot.enteredship == 0 then
 	 scale = scale+0.005
 	 translate = translate-1
-      elseif love.keyboard.isDown(",") then --decend
+      elseif love.keyboard.isDown("rctrl") or love.keyboard.isDown("lctrl") then --decend
 	 if scale < maxscale then
 	    scale = scale+0.002
 	 else
@@ -425,66 +429,65 @@ function love.update()
 	 end
       end --else fly! :)
    end
-   if love.keyboard.isDown("up") then
+   if love.keyboard.isDown("up") or love.keyboard.isDown("w") then
       pilot.csprite = 1
       if pilot.enteredship == 1 then spaceship.csprite = 1 end
       increase_ship_speed("up")
       drawy = drawy+speed
       if drawy % 32 == 0 then locy=locy-2 end
-      if love.keyboard.isDown("left") then
+      if love.keyboard.isDown("left") or love.keyboard.isDown("a") then
 	 drawx = drawx+speed
 	 if drawx % 32 == 0 then locx=locx-2 end
-      elseif love.keyboard.isDown("right") then
+      elseif love.keyboard.isDown("right") or love.keyboard.isDown("d") then
 	 drawx = drawx-speed
 	 if drawx % 32 == 0 then locx=locx+2 end
       end
-   elseif love.keyboard.isDown("down") then
+   elseif love.keyboard.isDown("down") or love.keyboard.isDown("s") then
       pilot.csprite = 3
       if pilot.enteredship == 1 then spaceship.csprite = 3 end
       increase_ship_speed("down")
       drawy = drawy-speed
       if drawy % 32 == 0 then locy=locy+2 end
-      if love.keyboard.isDown("left") then
+      if love.keyboard.isDown("left") or love.keyboard.isDown("a") then
 	 drawx = drawx+speed
 	 if drawx % 32 == 0 then locx=locx+2 end
-      elseif love.keyboard.isDown("right") then
+      elseif love.keyboard.isDown("right") or love.keyboard.isDown("d") then
 	 drawx = drawx-speed
 	 if drawx % 32 == 0 then locx=locx-2 end
       end
-   elseif love.keyboard.isDown("left") then
+   elseif love.keyboard.isDown("left") or love.keyboard.isDown("a") then
       pilot.csprite = 4
       if pilot.enteredship == 1 then spaceship.csprite = 4 end
       increase_ship_speed("left")
       drawx = drawx+speed
       if drawx % 32 == 0 then locx=locx-2 end
-      if love.keyboard.isDown("up") then
+      if love.keyboard.isDown("up") or love.keyboard.isDown("w") then
 	 drawy = drawy+speed
 	 if drawy % 32 == 0 then locy=locy-2 end
-      elseif love.keyboard.isDown("down") then
+      elseif love.keyboard.isDown("down") or love.keyboard.isDown("s") then
 	 drawy = drawy-speed
 	 if drawy % 32 == 0 then locy=locy+2 end
       end
-   elseif love.keyboard.isDown("right") then
+   elseif love.keyboard.isDown("right") or love.keyboard.isDown("d") then
       pilot.csprite = 2
       if pilot.enteredship == 1 then spaceship.csprite = 2 end
       increase_ship_speed("right")
       drawx = drawx-speed
       if drawx % 32 == 0 then locx=locx+2 end
-      if love.keyboard.isDown("up") then
+      if love.keyboard.isDown("up") or love.keyboard.isDown("w") then
 	 drawy = drawy+speed
 	 if drawy % 32 == 0 then locy=locy-2 end
-      elseif love.keyboard.isDown("down") then
+      elseif love.keyboard.isDown("down") or love.keyboard.isDown("s") then
 	 drawy = drawy-speed
 	 if drawy % 32 == 0 then locy=locy+2 end
       end
-   elseif love.keyboard.isDown("a") then
-      if pilot.enteredship == 1 then
-	 spaceship.rot = spaceship.rot-0.1
-      end
-   elseif love.keyboard.isDown("d") then
-      if pilot.enteredship == 1 then
-	 spaceship.rot = spaceship.rot+0.1
-      end
+   --elseif love.keyboard.isDown("z") then
+   --   if pilot.enteredship == 1 then
+	-- spaceship.rot = spaceship.rot-0.1
+   --   end
+   --elseif love.keyboard.isDown("c") then
+   --   if pilot.enteredship == 1 then
+	-- spaceship.rot = spaceship.rot+0.1
    else
       decrease_ship_speed()
    end
@@ -547,7 +550,7 @@ function draw_scene()
 	     and spaceship.y+drawy >= love.graphics.getHeight()/2-200 
 	  and spaceship.y+drawy <= love.graphics.getHeight()/2+200) then
       pilot.besideship = 1
-      love.graphics.print("Enter ship[press e]", 10, love.graphics.getHeight()-60)
+      love.graphics.print("Enter ship[press enter or e]", 10, love.graphics.getHeight()-60)
    else
       pilot.besideship = 0
    end
@@ -555,10 +558,10 @@ function draw_scene()
    love.graphics.setColor(255,255,255)
    love.graphics.print("Altitude: ".. scale..10, 20)
    if pilot.enteredship == 0 then
-      love.graphics.print("Use Directional Keys to walk, around, spacebar to use jetpack, and left mouse to shoot laser.",
+      love.graphics.print("Use Directional Keys or wasd to walk, around, shift to use jetpack, and left mouse to shoot laser.",
 			  10, love.graphics.getHeight()-30 )
    else -- you are in the ship
-      love.graphics.print("Use directional keys for thrusters, comma to fly up, and period to fly down. Use A and D to rotate ship",
+      love.graphics.print("Use Directional Keys or wasd for thrusters, shuft to fly up, and ctrl fly down.",
 			  10, love.graphics.getHeight()-30 ) 
    end
    love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10)
@@ -568,6 +571,14 @@ function love.draw()
    if mode == "title" then
    	love.graphics.setColor(255,255,255)
    	love.graphics.draw(title_screen, 0,0)
+love.graphics.setColor(0,0,0)
+love.graphics.print("       Credits", 10,10)
+        love.graphics.print("Lead Programmer: ", 10, 10+15)
+        love.graphics.print("   Tim Cooper", 10, 40)
+        love.graphics.print("Executive Artist:",10, 40+15)
+        love.graphics.print("   Thyrth", 10, 40+15+15)
+        love.graphics.print("Office Mascot: Sean Murray", 10, 55+15+15)
+
    else
    --draw everything else
    	draw_scene()
